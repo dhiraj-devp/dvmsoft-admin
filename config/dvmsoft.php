@@ -1,0 +1,42 @@
+<?php
+
+return [
+    'name' => 'Dvmsoft Admin OS',
+    'roles' => [
+        'Super Admin',
+        'Admin',
+        'Sales Manager',
+        'Sales Executive',
+        'Project Manager',
+        'Developer',
+        'Designer',
+        'QA',
+        'Support Executive',
+        'HR Manager',
+        'Accountant',
+        'Employee',
+    ],
+    'departments' => [
+        'Management',
+        'Sales',
+        'Business Development',
+        'Project Management',
+        'Development',
+        'Design',
+        'QA',
+        'Support',
+        'Finance',
+        'HR',
+        'Marketing',
+        'Operations',
+    ],
+    'audit_hidden' => [
+        'password',
+        'remember_token',
+        'two_factor_secret',
+        'two_factor_recovery_codes',
+        'api_key',
+        'token',
+        'secret',
+    ],
+];
