@@ -1,1 +1,0 @@
-document.addEventListener(`alpine:init`,()=>{Alpine.data(`toasts`,()=>({items:[],add(e){let t=e.detail??{},n={id:Date.now()+Math.random(),type:t.type||`success`,message:t.message||`Saved.`};this.items.push(n),setTimeout(()=>this.remove(n.id),4200)},remove(e){this.items=this.items.filter(t=>t.id!==e)}}))});
