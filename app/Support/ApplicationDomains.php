@@ -53,8 +53,11 @@ class ApplicationDomains
 
     public function isAdminHost(Request $request): bool
     {
-        return $this->hostsMatch($request->getHost(), $this->adminHost())
-            || $this->isLoopbackHost($request);
+        $host = $request->getHost();
+
+        return collect($this->staffHosts())->contains(
+            fn (string $staffHost) => $this->hostsMatch($host, $staffHost)
+        );
     }
 
     public function isLoopbackHost(Request $request): bool
@@ -77,7 +80,13 @@ class ApplicationDomains
      */
     public function staffHosts(): array
     {
-        return collect([$this->adminHost(), ...$this->loopbackHosts()])
+        return collect([
+            $this->adminHost(),
+            $this->appHost(),
+            ...$this->wwwAliases($this->adminHost()),
+            ...$this->wwwAliases($this->appHost()),
+            ...$this->loopbackHosts(),
+        ])
             ->filter()
             ->unique()
             ->values()
@@ -149,7 +158,15 @@ class ApplicationDomains
      */
     public function trustedHostPatterns(): array
     {
-        return collect([$this->adminHost(), $this->clientHost(), ...$this->loopbackHosts()])
+        return collect([
+            $this->adminHost(),
+            $this->clientHost(),
+            $this->appHost(),
+            ...$this->wwwAliases($this->adminHost()),
+            ...$this->wwwAliases($this->clientHost()),
+            ...$this->wwwAliases($this->appHost()),
+            ...$this->loopbackHosts(),
+        ])
             ->filter()
             ->unique(fn (string $host) => strtolower($host))
             ->map(fn (string $host) => '^'.preg_quote($host, '/').'$')
@@ -230,6 +247,25 @@ class ApplicationDomains
     protected function hostFromOrigin(string $origin): string
     {
         return strtolower((string) (parse_url($origin, PHP_URL_HOST) ?: ''));
+    }
+
+    protected function appHost(): string
+    {
+        return strtolower((string) (parse_url((string) config('app.url'), PHP_URL_HOST) ?: ''));
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected function wwwAliases(string $host): array
+    {
+        if ($host === '') {
+            return [];
+        }
+
+        return str_starts_with($host, 'www.')
+            ? [substr($host, 4)]
+            : ['www.'.$host];
     }
 
     protected function hostsMatch(string $left, string $right): bool

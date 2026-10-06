@@ -64,4 +64,22 @@ class ApplicationDomainsTest extends TestCase
         $this->assertFalse($domains->isClientContext($loopback));
         $this->assertContains('127.0.0.1', $domains->staffHosts());
     }
+
+    public function test_www_and_app_url_hosts_are_trusted_staff_aliases(): void
+    {
+        config([
+            'app.url' => 'https://app.dvmsoft.in',
+            'domains.admin_url' => 'https://app.dvmsoft.in',
+            'domains.client_url' => 'https://app.dvmsoft.in',
+        ]);
+
+        $domains = new ApplicationDomains;
+        $request = Request::create('https://www.app.dvmsoft.in/login');
+
+        $this->assertContains('app.dvmsoft.in', $domains->staffHosts());
+        $this->assertContains('www.app.dvmsoft.in', $domains->staffHosts());
+        $this->assertTrue($domains->isAdminHost($request));
+        $this->assertContains('^app\\.dvmsoft\\.in$', $domains->trustedHostPatterns());
+        $this->assertContains('^www\\.app\\.dvmsoft\\.in$', $domains->trustedHostPatterns());
+    }
 }
