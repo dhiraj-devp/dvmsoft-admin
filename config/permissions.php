@@ -219,6 +219,16 @@ return [
         ['name' => 'automations.manage', 'description' => 'Enable, disable, and configure automations'],
         ['name' => 'automations.history.view', 'description' => 'View automation execution history'],
     ],
+    'work' => [
+        ['name' => 'work.my.view', 'description' => 'View own daily progress'],
+        ['name' => 'work.my.manage', 'description' => 'Write own daily progress'],
+        ['name' => 'work.goals.view', 'description' => 'View assigned work and learning goals'],
+        ['name' => 'work.goals.manage', 'description' => 'Create and assign work and learning goals'],
+        ['name' => 'work.team.view', 'description' => 'View everyone\'s daily progress'],
+        ['name' => 'work.reviews.view', 'description' => 'View work reviews'],
+        ['name' => 'work.reviews.manage', 'description' => 'Leave feedback on daily updates'],
+        ['name' => 'work.reports.view', 'description' => 'View work management reports'],
+    ],
     'settings' => [
         ['name' => 'settings.view', 'description' => 'View settings'],
         ['name' => 'settings.manage', 'description' => 'Manage settings'],

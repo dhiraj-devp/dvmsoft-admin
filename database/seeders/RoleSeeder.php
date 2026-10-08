@@ -43,6 +43,7 @@ class RoleSeeder extends Seeder
                     'documents.view', 'documents.create', 'documents.edit', 'documents.upload', 'documents.download', 'documents.submit',
                     'reports.view', 'reports.sales.view', 'reports.export',
                     'ai.overview.view', 'ai.leads.use', 'ai.quotations.use',
+                    ...$this->workManagePermissions(),
                 ]),
                 'Sales Executive' => $this->ids($permissions, [
                     'dashboard.view', 'sales.view',
@@ -54,6 +55,7 @@ class RoleSeeder extends Seeder
                     'projects.view',
                     'reports.sales.view',
                     'ai.leads.use', 'ai.quotations.use',
+                    ...$this->workOwnPermissions(),
                 ]),
                 'Project Manager' => $this->ids($permissions, [
                     'dashboard.view',
@@ -74,6 +76,7 @@ class RoleSeeder extends Seeder
                     'documents.view', 'documents.create', 'documents.edit', 'documents.upload', 'documents.download', 'documents.submit', 'documents.manage_versions',
                     'reports.view', 'reports.projects.view', 'reports.export',
                     'ai.overview.view', 'ai.requirements.use', 'ai.projects.use', 'ai.quotations.use',
+                    ...$this->workManagePermissions(),
                 ]),
                 'Developer' => $this->ids($permissions, [
                     'dashboard.view',
@@ -88,6 +91,7 @@ class RoleSeeder extends Seeder
                     'requirements.view',
                     'change_requests.view', 'change_requests.create',
                     'ai.requirements.use', 'ai.projects.use',
+                    ...$this->workOwnPermissions(),
                 ]),
                 'Designer' => $this->ids($permissions, [
                     'dashboard.view',
@@ -100,6 +104,7 @@ class RoleSeeder extends Seeder
                     'tasks.view', 'tasks.create', 'tasks.edit',
                     'requirements.view',
                     'change_requests.view',
+                    ...$this->workOwnPermissions(),
                 ]),
                 'QA' => $this->ids($permissions, [
                     'dashboard.view',
@@ -113,6 +118,7 @@ class RoleSeeder extends Seeder
                     'tasks.view', 'tasks.edit',
                     'requirements.view',
                     'change_requests.view',
+                    ...$this->workOwnPermissions(),
                 ]),
                 'Support Executive' => $this->ids($permissions, [
                     'dashboard.view', 'clients.view', 'contacts.view', 'projects.view',
@@ -123,6 +129,7 @@ class RoleSeeder extends Seeder
                     'support.dashboard.view',
                     'reports.view', 'reports.support.view', 'reports.export',
                     'ai.tickets.use',
+                    ...$this->workOwnPermissions(),
                 ]),
                 'HR Manager' => $this->ids($permissions, [
                     'dashboard.view',
@@ -136,6 +143,7 @@ class RoleSeeder extends Seeder
                     'users.view', 'users.create', 'users.edit',
                     'documents.view', 'documents.create', 'documents.edit', 'documents.upload', 'documents.download', 'documents.submit', 'documents.approve', 'documents.archive', 'documents.manage_versions',
                     'reports.view', 'reports.hr.view', 'reports.export',
+                    ...$this->workManagePermissions(),
                 ]),
                 'Accountant' => $this->ids($permissions, [
                     'dashboard.view',
@@ -147,12 +155,38 @@ class RoleSeeder extends Seeder
                     'documents.view', 'documents.create', 'documents.edit', 'documents.upload', 'documents.download', 'documents.submit',
                     'reports.view', 'reports.finance.view', 'reports.export',
                     'ai.overview.view', 'ai.finance.use',
+                    ...$this->workOwnPermissions(),
                 ]),
-                default => $this->ids($permissions, ['dashboard.view']),
+                default => $this->ids($permissions, $this->workOwnPermissions()),
             };
 
             $role->permissions()->sync($assigned);
         }
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected function workOwnPermissions(): array
+    {
+        return [
+            'work.my.view',
+            'work.my.manage',
+        ];
+    }
+
+    /**
+     * @return list<string>
+     */
+    protected function workManagePermissions(): array
+    {
+        return array_merge($this->workOwnPermissions(), [
+            'work.goals.manage',
+            'work.team.view',
+            'work.reviews.view',
+            'work.reviews.manage',
+            'work.reports.view',
+        ]);
     }
 
     /**

@@ -39,7 +39,7 @@ class AuthenticatedSessionController extends Controller
             newValues: ['entry' => 'staff'],
         );
 
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route($user->homeRoute()));
     }
 
     public function destroy(Request $request): RedirectResponse

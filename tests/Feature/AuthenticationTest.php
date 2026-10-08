@@ -20,6 +20,19 @@ class AuthenticationTest extends TestCase
         $this->get('/')->assertRedirect(route('login'));
     }
 
+    public function test_staff_without_dashboard_permission_land_on_daily_progress(): void
+    {
+        $user = $this->userWithPermissions(['work.my.view', 'work.my.manage']);
+
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'password',
+        ])->assertRedirect(route('work.my'));
+
+        $this->get('/dashboard')->assertForbidden();
+        $this->get('/')->assertRedirect(route('work.my'));
+    }
+
     public function test_employees_can_authenticate_and_reach_the_dashboard(): void
     {
         $user = $this->userWithPermissions(['dashboard.view']);

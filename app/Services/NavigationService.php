@@ -51,12 +51,19 @@ class NavigationService
         }
 
         $permission = $item['permission'] ?? null;
+        $route = $item['route'] ?? null;
 
-        if ($permission && ! $user->hasPermission($permission)) {
+        if ($route === 'work.team') {
+            if (! $user->canViewWorkTeam()) {
+                return null;
+            }
+        } elseif ($route === 'office.calendar') {
+            if (! $user->is_super_admin) {
+                return null;
+            }
+        } elseif ($permission && ! $user->hasPermission($permission)) {
             return null;
         }
-
-        $route = $item['route'] ?? null;
 
         if ($route && ! Route::has($route)) {
             return null;
@@ -64,6 +71,7 @@ class NavigationService
 
         $item['active'] = match ($route) {
             'settings.index' => request()->routeIs('settings.*'),
+            'office.calendar' => request()->routeIs('office.calendar'),
             'roles.index' => request()->routeIs('roles.*'),
             'sales.dashboard' => request()->routeIs('sales.*'),
             'leads.index' => request()->routeIs('leads.*'),

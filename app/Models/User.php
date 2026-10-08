@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Concerns\Auditable;
+use App\Services\NavigationService;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -17,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Route;
 
 #[Fillable([
     'department_id',
@@ -73,6 +75,24 @@ class User extends Authenticatable
         return $this->hasMany(User::class, 'manager_id');
     }
 
+    public function canViewWorkTeam(): bool
+    {
+        return $this->hasPermission('work.team.view')
+            || $this->reports()->exists();
+    }
+
+    /**
+     * @return Builder<User>|HasMany<User, $this>
+     */
+    public function workTeamMembers(): Builder|HasMany
+    {
+        if ($this->hasPermission('work.team.view')) {
+            return static::query()->active();
+        }
+
+        return $this->reports()->active();
+    }
+
     public function employee(): HasOne
     {
         return $this->hasOne(Employee::class);
@@ -95,6 +115,27 @@ class User extends Authenticatable
         }
 
         return $this->permissionNames()->contains($permission);
+    }
+
+    public function homeRoute(): string
+    {
+        if ($this->hasPermission('dashboard.view') && Route::has('dashboard')) {
+            return 'dashboard';
+        }
+
+        foreach (app(NavigationService::class)->for($this) as $item) {
+            if (! empty($item['route']) && Route::has($item['route'])) {
+                return $item['route'];
+            }
+
+            foreach ($item['children'] ?? [] as $child) {
+                if (! empty($child['route']) && Route::has($child['route'])) {
+                    return $child['route'];
+                }
+            }
+        }
+
+        return Route::has('work.my') ? 'work.my' : 'login';
     }
 
     public function hasAnyPermission(array $permissions): bool

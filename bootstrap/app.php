@@ -72,9 +72,13 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $middleware->redirectUsersTo(function (Request $request) {
-            return app(ApplicationDomains::class)->isClientContext($request)
-                ? route('client.dashboard')
-                : route('dashboard');
+            if (app(ApplicationDomains::class)->isClientContext($request)) {
+                return route('client.dashboard');
+            }
+
+            $user = $request->user('web');
+
+            return $user ? route($user->homeRoute()) : route('dashboard');
         });
     })
     ->withExceptions(function (Exceptions $exceptions): void {

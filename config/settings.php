@@ -378,5 +378,12 @@ return [
             'default' => 'flexible',
             'is_public' => false,
         ],
+        'office.weekly_offs' => [
+            'type' => 'json',
+            'group' => 'office',
+            'description' => 'ISO weekdays that are always off (1=Mon … 7=Sun)',
+            'default' => [6, 7],
+            'is_public' => false,
+        ],
     ],
 ];

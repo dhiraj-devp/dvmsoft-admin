@@ -52,6 +52,15 @@ return [
         ],
     ],
     [
+        'label' => 'Work',
+        'icon' => 'clipboard',
+        'enabled' => true,
+        'children' => [
+            ['label' => 'Daily progress', 'route' => 'work.my', 'permission' => 'work.my.view', 'enabled' => true],
+            ['label' => 'Team progress', 'route' => 'work.team', 'permission' => 'work.team.view', 'enabled' => true],
+        ],
+    ],
+    [
         'label' => 'HR',
         'icon' => 'users',
         'enabled' => true,
@@ -119,6 +128,7 @@ return [
             ['label' => 'Audit Logs', 'route' => 'audit-logs.index', 'permission' => 'audit_logs.view', 'enabled' => true],
             ['label' => 'Automations', 'route' => 'automations.index', 'permission' => 'automations.view', 'enabled' => true],
             ['label' => 'Settings', 'route' => 'settings.index', 'permission' => 'settings.view', 'enabled' => true],
+            ['label' => 'Office calendar', 'route' => 'office.calendar', 'enabled' => true],
         ],
     ],
 ];

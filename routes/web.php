@@ -25,6 +25,7 @@ use App\Http\Controllers\LeaveController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\OffboardingController;
+use App\Http\Controllers\OfficeCalendarController;
 use App\Http\Controllers\OnboardingController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
@@ -45,12 +46,16 @@ use App\Http\Controllers\TicketCategoryController;
 use App\Http\Controllers\TicketController;
 use App\Http\Controllers\TicketSlaController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\WorkController;
+use App\Http\Controllers\WorkEvidenceController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
-    return auth('web')->check()
-        ? redirect()->route('dashboard')
-        : redirect()->route('login');
+    if (! auth('web')->check()) {
+        return redirect()->route('login');
+    }
+
+    return redirect()->route(auth('web')->user()->homeRoute());
 });
 
 Route::middleware('guest:web')->group(function () {
@@ -113,6 +118,8 @@ Route::middleware(['auth:web', 'active'])->group(function () {
         ->where('section', 'company|branding|localization|security|email|notifications|system|finance|hr|documents|ai|automations')
         ->name('settings.section');
 
+    Route::get('/office-calendar', OfficeCalendarController::class)->name('office.calendar');
+
     Route::get('/sales', SalesDashboardController::class)
         ->middleware('permission:sales.view')
         ->name('sales.dashboard');
@@ -148,6 +155,14 @@ Route::middleware(['auth:web', 'active'])->group(function () {
     Route::get('/projects/{project}/stages/{stage}/evidence/{evidence}', [ProjectStageFileController::class, 'evidence'])->middleware('permission:projects.stage_evidence.view')->name('projects.stages.evidence.download');
     Route::get('/projects/{project}/stages/{stage}/messages/{message}/attachments/{attachment}', [ProjectStageFileController::class, 'attachment'])->middleware('permission:projects.stage_discussion.view')->name('projects.stages.attachments.download');
     Route::post('/projects/{project}/invoice', [InvoiceController::class, 'fromProject'])->middleware('permission:invoices.create')->name('projects.invoice');
+
+    Route::get('/work', [WorkController::class, 'my'])->middleware('permission:work.my.view')->name('work.my');
+    Route::get('/work/updates', [WorkController::class, 'updates'])->middleware('permission:work.my.view')->name('work.updates');
+    Route::get('/work/goals', [WorkController::class, 'goals'])->middleware('permission:work.goals.view')->name('work.goals');
+    Route::get('/work/team', [WorkController::class, 'team'])->name('work.team');
+    Route::get('/work/reviews', [WorkController::class, 'reviews'])->middleware('permission:work.reviews.view')->name('work.reviews');
+    Route::get('/work/reports', [WorkController::class, 'reports'])->middleware('permission:work.reports.view')->name('work.reports');
+    Route::get('/work/evidence/{evidence}', [WorkEvidenceController::class, 'download'])->name('work.evidence.download');
 
     Route::get('/tasks', [TaskController::class, 'index'])->middleware('permission:tasks.view')->name('tasks.index');
     Route::get('/milestones', [MilestoneController::class, 'index'])->middleware('permission:milestones.view')->name('milestones.index');

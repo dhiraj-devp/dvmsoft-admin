@@ -83,6 +83,15 @@ return [
             'report' => false,
         ],
 
+        'work' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private/work'),
+            'visibility' => 'private',
+            'serve' => false,
+            'throw' => false,
+            'report' => false,
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

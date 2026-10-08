@@ -6,6 +6,7 @@ use App\Ai\AiManager;
 use App\Contracts\AiServiceInterface;
 use App\Models\User;
 use App\Services\NavigationService;
+use App\Services\OfficeCalendar;
 use App\Services\SettingsService;
 use App\Support\ApplicationDomains;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -22,6 +23,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->singleton(SettingsService::class);
         $this->app->singleton(NavigationService::class);
+        $this->app->singleton(OfficeCalendar::class);
         $this->app->singleton(ApplicationDomains::class);
         $this->app->singleton(AiManager::class);
         $this->app->bind(AiServiceInterface::class, fn ($app) => $app->make(AiManager::class)->driver());
