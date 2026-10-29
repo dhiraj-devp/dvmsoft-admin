@@ -6,7 +6,9 @@ use App\Http\Requests\Auth\LoginRequest;
 use App\Models\AuditLog;
 use App\Models\ClientUser;
 use App\Models\User;
+use Database\Seeders\SuperAdminSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Tests\TestCase;
 
@@ -24,8 +26,8 @@ class SuperAdminAuthTest extends TestCase
             ->assertDontSee('Sign in to Dvmsoft Admin', false);
 
         $this->post('/super-admin/login', [
-            'email' => env('ADMIN_EMAIL', 'admin@dvmsoft.local'),
-            'password' => env('ADMIN_PASSWORD', 'password'),
+            'email' => SuperAdminSeeder::SUPER_ADMIN_EMAIL,
+            'password' => SuperAdminSeeder::SUPER_ADMIN_PASSWORD,
         ])->assertRedirect(route('dashboard'));
 
         $this->assertAuthenticated('web');
@@ -117,6 +119,34 @@ class SuperAdminAuthTest extends TestCase
         $this->assertGuest('web');
     }
 
+    public function test_seeded_staff_admin_can_sign_in_through_staff_login(): void
+    {
+        $this->seed();
+
+        $this->post('/login', [
+            'email' => SuperAdminSeeder::ADMIN_EMAIL,
+            'password' => SuperAdminSeeder::ADMIN_PASSWORD,
+        ])->assertRedirect(route('dashboard'));
+
+        $admin = User::query()->where('email', SuperAdminSeeder::ADMIN_EMAIL)->first();
+
+        $this->assertNotNull($admin);
+        $this->assertFalse($admin->is_super_admin);
+        $this->assertAuthenticatedAs($admin, 'web');
+    }
+
+    public function test_seeding_admins_does_not_overwrite_an_existing_password(): void
+    {
+        $this->seed();
+
+        $superAdmin = User::query()->where('email', SuperAdminSeeder::SUPER_ADMIN_EMAIL)->firstOrFail();
+        $superAdmin->update(['password' => 'ChangedPassword12']);
+
+        $this->seed(SuperAdminSeeder::class);
+
+        $this->assertTrue(Hash::check('ChangedPassword12', $superAdmin->fresh()->password));
+    }
+
     public function test_staff_login_still_works_for_employees(): void
     {
         $employee = $this->userWithPermissions(['dashboard.view']);
@@ -153,8 +183,8 @@ class SuperAdminAuthTest extends TestCase
 
         $this->from('/login')
             ->post('/login', [
-                'email' => env('ADMIN_EMAIL', 'admin@dvmsoft.local'),
-                'password' => env('ADMIN_PASSWORD', 'password'),
+                'email' => SuperAdminSeeder::SUPER_ADMIN_EMAIL,
+                'password' => SuperAdminSeeder::SUPER_ADMIN_PASSWORD,
             ])
             ->assertSessionHasErrors(['email' => LoginRequest::GENERIC_FAILURE])
             ->assertRedirect('/login');

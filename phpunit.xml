@@ -35,9 +35,6 @@
         <env name="SESSION_DRIVER" value="array"/>
         <env name="PULSE_ENABLED" value="false"/>
         <env name="TELESCOPE_ENABLED" value="false"/>
-        <env name="ADMIN_EMAIL" value="admin@dvmsoft.local"/>
-        <env name="ADMIN_PASSWORD" value="password"/>
-        <env name="ADMIN_NAME" value="Super Admin"/>
         <env name="AI_ENABLED" value="true"/>
         <env name="AI_PROVIDER" value="fake"/>
         <env name="AI_MODEL" value="fake-test"/>

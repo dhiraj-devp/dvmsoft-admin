@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\ClientUser;
 use App\Models\User;
 use App\Notifications\ResetClientPassword;
+use Database\Seeders\SuperAdminSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Notification;
@@ -36,8 +37,8 @@ class DomainSeparationTest extends TestCase
             ->assertDontSee('Dvmsoft Client Portal', false);
 
         $this->post('http://admin.dvmsoft.test/super-admin/login', [
-            'email' => env('ADMIN_EMAIL', 'admin@dvmsoft.local'),
-            'password' => env('ADMIN_PASSWORD', 'password'),
+            'email' => SuperAdminSeeder::SUPER_ADMIN_EMAIL,
+            'password' => SuperAdminSeeder::SUPER_ADMIN_PASSWORD,
         ])->assertRedirect(route('dashboard'));
 
         $this->assertAuthenticated('web');

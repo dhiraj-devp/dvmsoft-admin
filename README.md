@@ -45,13 +45,7 @@ DB_PORT=3306
 DB_DATABASE=dvmsoft_admin
 DB_USERNAME=root
 DB_PASSWORD=
-
-ADMIN_NAME="Super Admin"
-ADMIN_EMAIL=admin@dvmsoft.local
-ADMIN_PASSWORD=change-me
 ```
-
-`ADMIN_*` values are used only by the development seeder to create the first Super Admin.
 
 Keep `SESSION_DOMAIN` empty so authentication cookies stay host-only and are not shared between the staff and client hosts.
 
@@ -99,7 +93,7 @@ Or together:
 php artisan migrate:fresh --seed
 ```
 
-This creates departments, roles, permissions, default settings, and the Super Admin user.
+This creates departments, roles, permissions, default settings, the Super Admin operator, and a staff Admin user. Passwords are stored on those users only; they are not read from `.env`. Re-seeding does not overwrite an existing password.
 
 ## Storage link
 
@@ -123,11 +117,13 @@ Or run the bundled Composer script:
 composer run dev
 ```
 
-Default login after seeding (from `.env`):
+Default login after seeding:
 
-- Staff: `http://127.0.0.1:8000/login`
+- Staff Admin: `http://127.0.0.1:8000/login` — `office@dvmsoft.local` / `password`
 - Client Portal: `http://127.0.0.1:8000/client/login`
-- Seeded Super Admin uses `ADMIN_EMAIL` / `ADMIN_PASSWORD` through a dedicated internal operator sign-in, not the staff login page.
+- Super Admin: `http://127.0.0.1:8000/super-admin/login` — `admin@dvmsoft.local` / `password` (dedicated operator sign-in, not the staff login page)
+
+Change those passwords in **Administration → Users** after first login. Do not put them in `.env`.
 
 ## Build commands
 
@@ -140,7 +136,7 @@ php artisan test
 ## Production deployment notes
 
 - Set `APP_ENV=production` and `APP_DEBUG=false`
-- Use a strong `APP_KEY` and unique `ADMIN_PASSWORD` only for the initial seed, then rotate it
+- Use a strong `APP_KEY`. Rotate the seeded Super Admin and Admin passwords after the first login; they are not stored in `.env`
 - Enable `SESSION_ENCRYPT=true` and `SESSION_SECURE_COOKIE=true` behind HTTPS
 - Set `APP_URL` and `ADMIN_URL` to `https://admin.dvmsoft.com` and `CLIENT_URL` to `https://client.dvmsoft.com`
 - Point both hostnames at this application; do not set `SESSION_DOMAIN` to a parent domain such as `.dvmsoft.com`
