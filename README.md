@@ -93,7 +93,7 @@ Or together:
 php artisan migrate:fresh --seed
 ```
 
-This creates departments, roles, permissions, default settings, the Super Admin operator, and a staff Admin user. Passwords are stored on those users only; they are not read from `.env`. Re-seeding does not overwrite an existing password.
+This creates departments, roles, permissions, default settings, the Super Admin operator, a staff Admin user, and demo Indian staff. Passwords are stored on those users only; they are not read from `.env`. Re-seeding does not overwrite an existing password.
 
 ## Storage link
 
@@ -120,6 +120,7 @@ composer run dev
 Default login after seeding:
 
 - Staff Admin: `http://127.0.0.1:8000/login` — `office@dvmsoft.local` / `password`
+- Demo staff: `priya.sharma@dvmsoft.local` / `password` (same password for all seeded Indian staff)
 - Client Portal: `http://127.0.0.1:8000/client/login`
 - Super Admin: `http://127.0.0.1:8000/super-admin/login` — `admin@dvmsoft.local` / `password` (dedicated operator sign-in, not the staff login page)
 
