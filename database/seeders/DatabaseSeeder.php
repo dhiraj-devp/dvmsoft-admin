@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             SupportSeeder::class,
             DocumentTypeSeeder::class,
             AutomationSeeder::class,
+            DemoSystemSeeder::class,
         ]);
     }
 }
